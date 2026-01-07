@@ -1,76 +1,98 @@
-import 'package:flame/components.dart';
 import 'package:flame/game.dart';
+import 'package:flame/components.dart';
 import 'package:flame/input.dart';
+import 'package:flutter/material.dart';
 
-enum GameState { playing, paused, gameOver, levelComplete }
+import 'game_state.dart';
+import 'level_config.dart';
+import 'player.dart';
+import 'obstacle.dart';
+import 'score_system.dart';
+import 'lives_system.dart';
+import 'game_controller.dart';
+import 'ui_overlay.dart';
+import 'analytics_service.dart';
 
-class Batch20260107125440Platformer01Game extends FlameGame with TapDetector {
+/// The main Flame game class for the Batch-20260107-125440-platformer-01 game.
+class Batch-20260107-125440-platformer-01Game extends FlameGame with TapDetector {
+  /// The current game state.
   GameState _gameState = GameState.playing;
-  int _currentLevel = 1;
-  int _score = 0;
+
+  /// The player component.
+  late Player _player;
+
+  /// The score system.
+  late ScoreSystem _scoreSystem;
+
+  /// The lives system.
+  late LivesSystem _livesSystem;
+
+  /// The game controller.
+  late GameController _gameController;
+
+  /// The UI overlay.
+  late UIOverlay _uiOverlay;
+
+  /// The analytics service.
+  final AnalyticsService _analyticsService = AnalyticsService();
 
   @override
   Future<void> onLoad() async {
-    super.onLoad();
-    // Load initial level and UI overlays
-    await loadLevel(_currentLevel);
-    overlays.add('HudOverlay'); // Assuming an overlay with this ID is defined elsewhere
+    // Set up the camera and world
+    camera.viewport = FixedResolutionViewport(Vector2(800, 600));
+    camera.followComponent(_player);
+
+    // Load the level configuration
+    await loadLevelConfig();
+
+    // Initialize the player, score, and lives systems
+    _player = Player();
+    _scoreSystem = ScoreSystem();
+    _livesSystem = LivesSystem();
+
+    // Add the player, obstacles, and UI components to the game
+    add(_player);
+    addObstacles();
+    _gameController = GameController(this);
+    _uiOverlay = UIOverlay(this, _scoreSystem, _livesSystem);
+    add(_uiOverlay);
+
+    // Subscribe to game events
+    _gameController.onTap = _handleTap;
+    _livesSystem.onGameOver = _handleGameOver;
+    _scoreSystem.onLevelComplete = _handleLevelComplete;
   }
 
-  /// Handles tap inputs to control the player character.
-  @override
-  void onTap() {
-    if (_gameState == GameState.playing) {
-      // Implement player jump mechanic
+  /// Loads the level configuration from the provided data.
+  Future<void> loadLevelConfig() async {
+    // Load the level configuration from the provided data
+    final levelConfig = LevelConfig.fromJson(levelData);
+
+    // Create the obstacles based on the level configuration
+    for (final obstacleData in levelConfig.obstacles) {
+      final obstacle = Obstacle(obstacleData.position, obstacleData.size);
+      add(obstacle);
     }
   }
 
-  /// Loads the specified level and initializes necessary components.
-  Future<void> loadLevel(int levelNumber) async {
-    // Placeholder for level loading logic
-    // This would include setting up the level layout, player, obstacles, and collectibles
-    print("Loading level $levelNumber...");
+  /// Handles a tap input from the player.
+  void _handleTap() {
+    if (_gameState == GameState.playing) {
+      _player.jump();
+    }
   }
 
-  /// Updates the game state to [GameState.paused].
-  void pauseGame() {
-    _gameState = GameState.paused;
-    pauseEngine();
-  }
-
-  /// Resumes the game from a paused state.
-  void resumeGame() {
-    _gameState = GameState.playing;
-    resumeEngine();
-  }
-
-  /// Handles the logic for when the player completes a level.
-  void completeLevel() {
-    _gameState = GameState.levelComplete;
-    // Placeholder for level completion logic, such as saving progress, showing completion UI, etc.
-  }
-
-  /// Handles the logic for when the game is over.
-  void gameOver() {
+  /// Handles a game over event.
+  void _handleGameOver() {
     _gameState = GameState.gameOver;
-    // Placeholder for game over logic, such as resetting the level, showing game over UI, etc.
+    _analyticsService.logEvent('level_fail');
+    // Show the game over UI and handle retry/quit actions
   }
 
-  /// Increments the player's score.
-  void addScore(int points) {
-    _score += points;
-    // Update score display, if necessary
-  }
-
-  /// Gets the current game state.
-  GameState get gameState => _gameState;
-
-  /// Gets the current score.
-  int get score => _score;
-
-  /// Sets the current level. Useful for level selection or restarting.
-  set currentLevel(int level) {
-    _currentLevel = level;
-    loadLevel(_currentLevel);
+  /// Handles a level complete event.
+  void _handleLevelComplete() {
+    _gameState = GameState.levelComplete;
+    _analyticsService.logEvent('level_complete');
+    // Show the level complete UI and handle next level/unlock actions
   }
 }

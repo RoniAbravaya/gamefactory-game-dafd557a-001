@@ -1,98 +1,92 @@
 import 'package:flame/components.dart';
-import 'package:flame/geometry.dart';
-import 'package:flame/input.dart';
-import 'package:flutter/services.dart';
+import 'package:flame/sprite.dart';
+import 'package:flutter/material.dart';
 
-/// Represents the player character in the platformer game.
-/// Handles animations, movement, jumping, collision detection, and scoring.
-class Player extends SpriteAnimationComponent
-    with HasGameRef, Hitbox, Collidable, KeyboardHandler {
-  Vector2 velocity = Vector2(0, 0);
-  final double gravity = 500;
-  final double jumpSpeed = -300;
-  bool onGround = false;
-  int lives = 3;
-  int score = 0;
+/// The Player component for the platformer game.
+class Player extends SpriteAnimationComponent with HasGameRef {
+  static const double _playerSpeed = 200.0;
+  static const double _playerJumpForce = 500.0;
+  static const double _playerGravity = 1200.0;
+  static const double _playerMaxHealth = 100.0;
+  static const double _playerInvulnerabilityDuration = 1.0;
 
-  /// Animation states for the player.
-  late final SpriteAnimation idleAnimation;
-  late final SpriteAnimation runningAnimation;
-  late final SpriteAnimation jumpingAnimation;
+  double _health = _playerMaxHealth;
+  double _velocity = 0.0;
+  bool _isJumping = false;
+  bool _isInvulnerable = false;
+  double _invulnerabilityTimer = 0.0;
 
-  Player() : super(size: Vector2(50, 50), anchor: Anchor.center);
+  /// Creates a new instance of the Player component.
+  Player() : super(size: Vector2.all(50.0));
 
   @override
-  Future<void>? onLoad() async {
+  Future<void> onLoad() async {
     await super.onLoad();
-    // Load animations
-    final spriteSheet = SpriteSheet(
-      image: await gameRef.images.load('player_spritesheet.png'),
-      srcSize: Vector2(50, 50),
-    );
-    idleAnimation = spriteSheet.createAnimation(row: 0, stepTime: 0.1, to: 4);
-    runningAnimation = spriteSheet.createAnimation(row: 1, stepTime: 0.1, to: 4);
-    jumpingAnimation = spriteSheet.createAnimation(row: 2, stepTime: 0.1, to: 4);
-    animation = idleAnimation;
 
-    // Setup collision detection
-    addShape(HitboxRectangle());
+    // Load the player's sprite animation
+    final spriteSheet = SpriteSheet(
+      image: await gameRef.images.load('player.png'),
+      srcSize: Vector2(32.0, 32.0),
+    );
+    animation = spriteSheet.createAnimation(row: 0, stepTime: 0.1, to: 4);
   }
 
   @override
   void update(double dt) {
     super.update(dt);
-    velocity.y += gravity * dt;
-    position += velocity * dt;
 
-    // Check if the player is on the ground
-    if (position.y > gameRef.size.y - size.y / 2) {
-      position.y = gameRef.size.y - size.y / 2;
-      onGround = true;
-      velocity.y = 0;
-    } else {
-      onGround = false;
+    // Handle player movement and jumping
+    _handleMovement(dt);
+    _handleJumping(dt);
+
+    // Handle player invulnerability
+    _handleInvulnerability(dt);
+  }
+
+  void _handleMovement(double dt) {
+    // Apply horizontal movement
+    position.x += _playerSpeed * dt;
+
+    // Apply gravity
+    _velocity += _playerGravity * dt;
+    position.y += _velocity * dt;
+  }
+
+  void _handleJumping(double dt) {
+    // Handle jumping
+    if (gameRef.input.isPressed(LogicalKeyboardKey.space) && !_isJumping) {
+      _velocity = -_playerJumpForce;
+      _isJumping = true;
     }
 
-    // Update animation based on the player's state
-    if (!onGround) {
-      animation = jumpingAnimation;
-    } else if (velocity.x.abs() > 0) {
-      animation = runningAnimation;
-    } else {
-      animation = idleAnimation;
+    if (_velocity >= 0) {
+      _isJumping = false;
     }
   }
 
-  @override
-  bool onKeyEvent(RawKeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
-    if (event is RawKeyDownEvent) {
-      if (keysPressed.contains(LogicalKeyboardKey.space) && onGround) {
-        velocity.y = jumpSpeed;
-        onGround = false;
+  void _handleInvulnerability(double dt) {
+    // Handle player invulnerability
+    if (_isInvulnerable) {
+      _invulnerabilityTimer += dt;
+      if (_invulnerabilityTimer >= _playerInvulnerabilityDuration) {
+        _isInvulnerable = false;
+        _invulnerabilityTimer = 0.0;
       }
     }
-    return super.onKeyEvent(event, keysPressed);
   }
 
-  /// Increments the player's score.
-  void addScore(int points) {
-    score += points;
-  }
-
-  /// Decreases the player's life by one and resets the player's position if lives are still available.
-  void loseLife() {
-    lives -= 1;
-    if (lives > 0) {
-      position = Vector2(100, gameRef.size.y - 150); // Reset position
-    } else {
-      // Handle game over state
-      print('Game Over');
+  void takeDamage(double amount) {
+    // Reduce player's health and set invulnerability
+    if (!_isInvulnerable) {
+      _health = (_health - amount).clamp(0.0, _playerMaxHealth);
+      _isInvulnerable = true;
     }
   }
 
-  @override
-  void onCollision(Set<Vector2> intersectionPoints, Collidable other) {
-    super.onCollision(intersectionPoints, other);
-    // Handle collision with obstacles or ground
+  void collectItem(double value) {
+    // Increase player's health
+    _health = (_health + value).clamp(0.0, _playerMaxHealth);
   }
+
+  bool get isDead => _health <= 0.0;
 }
