@@ -1,0 +1,244 @@
+{
+  "levels": [
+    {
+      "level_number": 1,
+      "name": "Easy Start",
+      "is_free": true,
+      "unlock_requirement": "none",
+      "difficulty": 0.1,
+      "time_limit_seconds": 60,
+      "target_score": 500,
+      "obstacles": {
+        "type": "static_platform",
+        "count": 3,
+        "speed": 0
+      },
+      "collectibles": {
+        "type": "coin",
+        "count": 10,
+        "value": 10
+      },
+      "special_features": [],
+      "background_theme": "grassy_meadow",
+      "music_track": "level_1"
+    },
+    {
+      "level_number": 2,
+      "name": "Jumping Practice",
+      "is_free": true,
+      "unlock_requirement": "none",
+      "difficulty": 0.2,
+      "time_limit_seconds": 60,
+      "target_score": 750,
+      "obstacles": {
+        "type": "static_platform",
+        "count": 5,
+        "speed": 0
+      },
+      "collectibles": {
+        "type": "coin",
+        "count": 15,
+        "value": 10
+      },
+      "special_features": [],
+      "background_theme": "grassy_meadow",
+      "music_track": "level_2"
+    },
+    {
+      "level_number": 3,
+      "name": "Obstacle Course",
+      "is_free": true,
+      "unlock_requirement": "none",
+      "difficulty": 0.3,
+      "time_limit_seconds": 90,
+      "target_score": 1000,
+      "obstacles": {
+        "type": "static_platform",
+        "count": 7,
+        "speed": 0
+      },
+      "collectibles": {
+        "type": "coin",
+        "count": 20,
+        "value": 10
+      },
+      "special_features": [],
+      "background_theme": "grassy_meadow",
+      "music_track": "level_3"
+    },
+    {
+      "level_number": 4,
+      "name": "Moving Platforms",
+      "is_free": false,
+      "unlock_requirement": "rewarded_ad",
+      "difficulty": 0.4,
+      "time_limit_seconds": 90,
+      "target_score": 1500,
+      "obstacles": {
+        "type": "moving_platform",
+        "count": 5,
+        "speed": 2
+      },
+      "collectibles": {
+        "type": "coin",
+        "count": 25,
+        "value": 10
+      },
+      "special_features": [],
+      "background_theme": "city_rooftops",
+      "music_track": "level_4"
+    },
+    {
+      "level_number": 5,
+      "name": "Precision Jumps",
+      "is_free": false,
+      "unlock_requirement": "rewarded_ad",
+      "difficulty": 0.5,
+      "time_limit_seconds": 120,
+      "target_score": 2000,
+      "obstacles": {
+        "type": "moving_platform",
+        "count": 7,
+        "speed": 3
+      },
+      "collectibles": {
+        "type": "gem",
+        "count": 10,
+        "value": 50
+      },
+      "special_features": [],
+      "background_theme": "city_rooftops",
+      "music_track": "level_5"
+    },
+    {
+      "level_number": 6,
+      "name": "Tricky Timing",
+      "is_free": false,
+      "unlock_requirement": "rewarded_ad",
+      "difficulty": 0.6,
+      "time_limit_seconds": 120,
+      "target_score": 2500,
+      "obstacles": {
+        "type": "moving_platform",
+        "count": 10,
+        "speed": 4
+      },
+      "collectibles": {
+        "type": "gem",
+        "count": 12,
+        "value": 50
+      },
+      "special_features": [
+        "disappearing_platforms"
+      ],
+      "background_theme": "industrial_factory",
+      "music_track": "level_6"
+    },
+    {
+      "level_number": 7,
+      "name": "Gauntlet",
+      "is_free": false,
+      "unlock_requirement": "rewarded_ad",
+      "difficulty": 0.7,
+      "time_limit_seconds": 150,
+      "target_score": 3000,
+      "obstacles": {
+        "type": "moving_platform",
+        "count": 12,
+        "speed": 5
+      },
+      "collectibles": {
+        "type": "gem",
+        "count": 15,
+        "value": 50
+      },
+      "special_features": [
+        "disappearing_platforms",
+        "spike_traps"
+      ],
+      "background_theme": "industrial_factory",
+      "music_track": "level_7"
+    },
+    {
+      "level_number": 8,
+      "name": "Challenging Sequence",
+      "is_free": false,
+      "unlock_requirement": "rewarded_ad",
+      "difficulty": 0.8,
+      "time_limit_seconds": 150,
+      "target_score": 3500,
+      "obstacles": {
+        "type": "moving_platform",
+        "count": 15,
+        "speed": 6
+      },
+      "collectibles": {
+        "type": "gem",
+        "count": 18,
+        "value": 50
+      },
+      "special_features": [
+        "disappearing_platforms",
+        "spike_traps",
+        "moving_spikes"
+      ],
+      "background_theme": "futuristic_city",
+      "music_track": "level_8"
+    },
+    {
+      "level_number": 9,
+      "name": "Precision Madness",
+      "is_free": false,
+      "unlock_requirement": "rewarded_ad",
+      "difficulty": 0.9,
+      "time_limit_seconds": 180,
+      "target_score": 4000,
+      "obstacles": {
+        "type": "moving_platform",
+        "count": 18,
+        "speed": 7
+      },
+      "collectibles": {
+        "type": "gem",
+        "count": 20,
+        "value": 50
+      },
+      "special_features": [
+        "disappearing_platforms",
+        "spike_traps",
+        "moving_spikes",
+        "bouncing_platforms"
+      ],
+      "background_theme": "futuristic_city",
+      "music_track": "level_9"
+    },
+    {
+      "level_number": 10,
+      "name": "Extreme Challenge",
+      "is_free": false,
+      "unlock_requirement": "rewarded_ad",
+      "difficulty": 1.0,
+      "time_limit_seconds": 180,
+      "target_score": 5000,
+      "obstacles": {
+        "type": "moving_platform",
+        "count": 20,
+        "speed": 8
+      },
+      "collectibles": {
+        "type": "gem",
+        "count": 25,
+        "value": 50
+      },
+      "special_features": [
+        "disappearing_platforms",
+        "spike_traps",
+        "moving_spikes",
+        "bouncing_platforms",
+        "gravity_flips"
+      ],
+      "background_theme": "futuristic_city",
+      "music_track": "level_10"
+    }
+  ]
+}
